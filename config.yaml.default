@@ -1,0 +1,4 @@
+themesPath: "" # folder with themes 
+subjectsPath: "" # dir with stuff to change
+exclude: [] # restrict subjects path
+
