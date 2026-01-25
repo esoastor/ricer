@@ -1,31 +1,86 @@
 package filesys
 
 import (
-	"path/filepath"
 	"io/fs"
+	"log"
+	"path/filepath"
 	"ricer/internal/config"
 	"ricer/internal/consts"
+	"ricer/internal/types"
 )
 
-func GetChangingConfigFiles() []string {
-	conf := config.GetConfig()
-	return getFiles(conf.SubjectPath)
-}
-
-func GetThemes() []string {
-	conf := config.GetConfig()
-	themes := getFiles(conf.ThemesPath)
-	var themesFiltered []string 
-
-	curThemeFileNameLen := len(consts.CURRENT_THEME_FILE_NAME)
-	for _, file := range themes {
-		if file[len(file)-curThemeFileNameLen:] == consts.CURRENT_THEME_FILE_NAME {
+func GetThemeByName(name string) types.ThemeFile {
+	themes := GetThemes()
+	for _, theme := range themes {
+		if theme.Name != name {
 			continue
 		}
-		themesFiltered = append(themesFiltered, file)
+		return theme
+	}
+	panic("no theme")
+}
+
+func GetCurrentTheme() types.ThemeFile {
+	conf := config.GetConfig()
+	themes := getFiles(conf.ThemesPath)
+
+	curThemeFileNameLen := len(consts.CURRENT_THEME_FILE_NAME)
+	for _, filePath := range themes {
+		fileName := GetFileName(filePath)
+		if filePath[len(filePath)-curThemeFileNameLen:] != consts.CURRENT_THEME_FILE_NAME {
+			continue
+		}
+		return types.ThemeFile{Path: filePath, Name: fileName}
+	}
+
+	log.Fatal("Failed to get current theme")
+	return types.ThemeFile{}
+}
+
+func GetThemes() []types.ThemeFile {
+	conf := config.GetConfig()
+	themes := getFiles(conf.ThemesPath)
+	var themesFiltered []types.ThemeFile
+
+	curThemeFileNameLen := len(consts.CURRENT_THEME_FILE_NAME)
+	for _, filePath := range themes {
+		fileName := GetFileName(filePath)
+		if filePath[len(filePath)-curThemeFileNameLen:] == consts.CURRENT_THEME_FILE_NAME {
+			continue
+		}
+		themesFiltered = append(themesFiltered, types.ThemeFile{Path: filePath, Name: fileName})
 	}
 
 	return themesFiltered
+}
+
+// files that changing
+// todo filter excluded
+func getSubjectFiles() []string {
+	conf := config.GetConfig()
+	filesAll := getFiles(conf.SubjectPath)
+	var filesFiltered []string
+	excludes := conf.Exclude
+	for _, file := range filesAll {
+		write := true
+		for _, exclude := range excludes {
+			exLen := len(exclude)
+			if exLen > len(file) {
+				filesFiltered = append(filesFiltered, file)
+				continue
+			}
+			fileSub := file[0:exLen]
+
+			if fileSub == exclude {
+				write = false
+				break
+			}
+		}
+		if write {
+			filesFiltered = append(filesFiltered, file)
+		}
+	}
+	return filesFiltered
 }
 
 func getFiles(path string) []string {
@@ -43,8 +98,11 @@ func getFiles(path string) []string {
 	})
 
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 	return files
 }
 
+func GetFileName(path string) string {
+	return filepath.Base(path)
+}

@@ -1,17 +1,14 @@
 package config
 
 import (
-	"os"
+	"gopkg.in/yaml.v3"
 	"io"
 	"log"
+	"os"
 	"path/filepath"
-	"gopkg.in/yaml.v3"
-	"ricer/internal/types"
 	"ricer/internal/consts"
+	"ricer/internal/types"
 )
-
-
-
 
 func GetConfig() types.Config {
 	path := getConfigPath()
@@ -26,12 +23,11 @@ func GetConfig() types.Config {
 	}
 
 	var config types.Config
-    err = yaml.Unmarshal(data, &config)
-    if err != nil {
-        log.Fatalf("error: %v", err)
-    }
+	err = yaml.Unmarshal(data, &config)
+	if err != nil {
+		log.Fatalf("error: %v", err)
+	}
 
-	
 	return config
 }
 
@@ -42,4 +38,3 @@ func getConfigPath() string {
 	}
 	return filepath.Join(home, consts.CONFIG_PATH)
 }
-
