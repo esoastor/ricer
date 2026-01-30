@@ -12,9 +12,9 @@ import (
 )
 
 func SubmitTheme(theme types.ThemeFile) {
-	subjects := getSubjectFiles()
+	subjects := GetSubjectFiles()
 
-	changeMap := createChangeMap(theme)
+	changeMap := CreateChangeMap(theme)
 	for _, subjectPath := range subjects {
 		contentRaw, err := os.ReadFile(subjectPath)
 		if err != nil {
@@ -45,7 +45,7 @@ func setCurrentTheme(theme types.ThemeFile) {
 	os.WriteFile(defPath, content, 0644)
 }
 
-func createChangeMap(themeFile types.ThemeFile) []types.ChangeMap {
+func CreateChangeMap(themeFile types.ThemeFile) []types.ChangeMap {
 	current := GetCurrentTheme()
 
 	newTheme := themeFile.FormTheme()
@@ -53,10 +53,15 @@ func createChangeMap(themeFile types.ThemeFile) []types.ChangeMap {
 
 	var changeMap []types.ChangeMap
 	for code, value := range curTheme {
-		if newTheme[code] == "" {
+		if newTheme[code] == "" || value == newTheme[code] {
 			continue
 		}
-		changeMap = append(changeMap, types.ChangeMap{From: value, To: newTheme[code]})
+		changeMap = append(changeMap, types.ChangeMap{
+			Code:  code,
+			From: value,
+			To:   newTheme[code],
+		})
 	}
 	return changeMap
 }
+

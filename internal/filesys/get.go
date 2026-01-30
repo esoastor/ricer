@@ -54,9 +54,7 @@ func GetThemes() []types.ThemeFile {
 	return themesFiltered
 }
 
-// files that changing
-// todo filter excluded
-func getSubjectFiles() []string {
+func GetSubjectFiles() []string {
 	conf := config.GetConfig()
 	filesAll := getFiles(conf.SubjectPath)
 	var filesFiltered []string
