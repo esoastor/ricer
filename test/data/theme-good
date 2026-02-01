@@ -1,0 +1,22 @@
+
+globalVar1 = #fbaded
+
+// comment
+[file /nvim/theme.lua]
+theme = ```
+    {
+        "some-theme",
+        local params = test test params // comment
+    }
+```
+[endfile]
+
+// comment
+[ file    /some/folder/test.css ]
+var1=testVal val val
+var2=somevalidstuff
+var3     =     faraway
+[ end file ]
+
+glovalVar2 = #deffed
+

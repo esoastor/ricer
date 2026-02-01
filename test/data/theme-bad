@@ -1,0 +1,14 @@
+globalVar = #fff000
+
+// comment
+[file /nvim/themes]
+theme = ```
+    {
+        "some-theme",
+        local params = test test params // comment
+    }
+```
+[endfile]
+
+[wrong tag]
+[asdf]
