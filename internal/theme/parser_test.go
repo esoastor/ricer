@@ -1,15 +1,11 @@
-package theme
+package theme_test
 
 import (
 	"log"
-	"os"
-	"path/filepath"
+	"ricer/internal/theme"
+	"ricer/test/helpers"
 	"testing"
 )
-
-const testThemesPath = "test/data/"
-const goodThemeFileName = "theme-good"
-
 func TestParseMetaStartGood(t *testing.T) {
 	options := []string{
 		"[ file  /sdf/asgd.asdg   ]",
@@ -18,7 +14,7 @@ func TestParseMetaStartGood(t *testing.T) {
 	}
 
 	for _, option := range options {
-		tag, file := parseStartMeta(option)
+		tag, file := theme.ParseStartMeta(option)
 		if tag != "file" {
 			t.Fatalf("%v != %v", tag, "file")
 		}
@@ -37,7 +33,7 @@ func TestParseMetaStartBad(t *testing.T) {
 	}
 
 	for _, option := range options {
-		tag, file := parseStartMeta(option)
+		tag, file := theme.ParseStartMeta(option)
 		if tag != "" || file != "" {
 			t.Fatal("must be empty")
 		}
@@ -52,7 +48,7 @@ func TestParseMetaEndGood(t *testing.T) {
 	}
 
 	for _, option := range options {
-		tag := parseEndMeta(option)
+		tag := theme.ParseEndMeta(option)
 		if tag != "file" {
 			t.Fatalf("invalid tag (%v)\nparsed \"%v\"", tag, option)
 		}
@@ -67,7 +63,7 @@ func TestParseMetaEndBad(t *testing.T) {
 	}
 
 	for _, option := range options {
-		tag := parseEndMeta(option)
+		tag := theme.ParseEndMeta(option)
 		if tag != "" {
 			t.Fatalf("invalid tag (%v)\nparsed \"%v\"", tag, option)
 		}
@@ -84,9 +80,9 @@ func TestGetGoodTheme(t *testing.T) {
 	}
 	expectedRows := 6
 
-	themeFile := getThemeFile(goodThemeFileName)
+	themeFile := helpers.GetGoodTheme()
 
-	testTheme := GetTheme(themeFile)
+	testTheme := theme.GetTheme(themeFile)
 
 	if len(testTheme) != expectedRows {
 		t.Fatalf("Wrong number: %v != %v", expectedRows, len(testTheme))
@@ -99,14 +95,7 @@ func TestGetGoodTheme(t *testing.T) {
 			t.Fatalf("Wrong path: \"%v\" != \"%v\"", expected, got)
 		}
 	}
-	log.Print(testTheme)
 }
 
-func getThemeFile(themeFileName string) ThemeFile {
-	projectPath, err := os.Getwd()
-	if err != nil {
-		panic("Filed to resolve project path")
-	}
-	path := filepath.Join(projectPath, "../..", testThemesPath, themeFileName)
-	return ThemeFile{Path: path, Name: "test"}
-}
+// todo TestGetBadTheme
+

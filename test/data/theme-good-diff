@@ -1,0 +1,22 @@
+// theme to test changemap
+globalVar1 = #fbad00
+
+// comment
+[file /nvim/theme.lua]
+theme = ```
+    {
+        "new-theme",
+        local params = test test params // comment
+    }
+```
+[endfile]
+
+// comment
+[ file    /some/folder/test.css ]
+var1=testVal val vaaaaaaal
+var2=somevalidstuff
+var3     =     faraway
+[ end file ]
+
+glovalVar2 = #deffed
+

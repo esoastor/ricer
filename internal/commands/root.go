@@ -88,9 +88,13 @@ func showChangemap(cmd *cobra.Command, args []string) {
 	}
 	theme := themes[index-1]
 	// todo: failed to get current theme
-	changeMap := filesys.CreateChangeMap(theme)
+	changeMap := filesys.CreateChangeMapForCurrent(theme)
 	for _, change := range changeMap {
-		fmt.Printf("%v: %v => %v\n", change.Code, change.From, change.To)
+		where := "all files"
+		if len(change.File) > 0 {
+			where = change.File
+		}
+		fmt.Printf("[%v] %v: %v => %v\n", where, change.Code, change.From, change.To)
 	}
 }
 
