@@ -1,11 +1,13 @@
 package theme_test
 
 import (
-	"log"
+	// "log"
 	"ricer/internal/theme"
 	"ricer/test/helpers"
+	"slices"
 	"testing"
 )
+
 func TestParseMetaStartGood(t *testing.T) {
 	options := []string{
 		"[ file  /sdf/asgd.asdg   ]",
@@ -23,7 +25,6 @@ func TestParseMetaStartGood(t *testing.T) {
 		}
 	}
 }
-
 
 func TestParseMetaStartBad(t *testing.T) {
 	options := []string{
@@ -70,15 +71,16 @@ func TestParseMetaEndBad(t *testing.T) {
 	}
 }
 func TestGetGoodTheme(t *testing.T) {
-	keyPathMap := map[string]string{
-		"globalVar1": "",
-		"theme":      "/nvim/theme.lua",
-		"var1":       "/some/folder/test.css",
-		"var2":       "/some/folder/test.css",
-		"var3":       "/some/folder/test.css",
-		"glovalVar2": "",
+	keyPathMerges := []string{
+		"globalVar1",
+		"var1coolSoft/styles.css",
+		"themecoolSoft/styles.css",
+		"var1/some/folder/test.css",
+		"var2/some/folder/test.css",
+		"var3/some/folder/test.css",
+		"glovalVar2",
 	}
-	expectedRows := 6
+	expectedRows := 7
 
 	themeFile := helpers.GetGoodTheme()
 
@@ -89,13 +91,11 @@ func TestGetGoodTheme(t *testing.T) {
 	}
 
 	for _, row := range testTheme {
-		expected := keyPathMap[row.Key]
-		got := row.Meta.Path
-		if got != expected {
-			t.Fatalf("Wrong path: \"%v\" != \"%v\"", expected, got)
+		exists := slices.Contains(keyPathMerges, row.Key+row.Meta.Path)
+		if !exists {
+			t.Fatalf("Row not found: \"%v\"", row)
 		}
 	}
 }
 
 // todo TestGetBadTheme
-

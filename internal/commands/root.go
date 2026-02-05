@@ -91,8 +91,8 @@ func showChangemap(cmd *cobra.Command, args []string) {
 	changeMap := filesys.CreateChangeMapForCurrent(theme)
 	for _, change := range changeMap {
 		where := "all files"
-		if len(change.File) > 0 {
-			where = change.File
+		if len(change.FilePath) > 0 {
+			where = change.FilePath
 		}
 		fmt.Printf("[%v] %v: %v => %v\n", where, change.Code, change.From, change.To)
 	}

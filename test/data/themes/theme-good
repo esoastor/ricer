@@ -2,7 +2,8 @@
 globalVar1 = #fbaded
 
 // comment
-[file /nvim/theme.lua]
+[file coolSoft/styles.css]
+var1=#1f2fff
 theme = ```
     {
         "some-theme",

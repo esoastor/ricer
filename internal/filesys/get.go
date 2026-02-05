@@ -23,7 +23,7 @@ func GetThemeByName(name string) theme.ThemeFile {
 
 func GetCurrentTheme() theme.ThemeFile {
 	conf := config.GetConfig()
-	themes := getFiles(conf.ThemesPath)
+	themes := GetFiles(conf.ThemesPath)
 
 	curThemeFileNameLen := len(consts.CURRENT_THEME_FILE_NAME)
 	for _, filePath := range themes {
@@ -44,7 +44,7 @@ func GetCurrentTheme() theme.ThemeFile {
 
 func GetThemes() []theme.ThemeFile {
 	conf := config.GetConfig()
-	themes := getFiles(conf.ThemesPath)
+	themes := GetFiles(conf.ThemesPath)
 	var themesFiltered []theme.ThemeFile
 
 	curThemeFileNameLen := len(consts.CURRENT_THEME_FILE_NAME)
@@ -64,7 +64,7 @@ func GetThemes() []theme.ThemeFile {
 
 func GetSubjectFiles() []string {
 	conf := config.GetConfig()
-	filesAll := getFiles(conf.SubjectPath)
+	filesAll := GetFiles(conf.SubjectPath)
 	var filesFiltered []string
 	excludes := conf.Exclude
 	for _, file := range filesAll {
@@ -89,7 +89,7 @@ func GetSubjectFiles() []string {
 	return filesFiltered
 }
 
-func getFiles(path string) []string {
+func GetFiles(path string) []string {
 	files := make([]string, 0)
 	err := filepath.WalkDir(path, func(currentPath string, directoryEntry fs.DirEntry, walkError error) error {
 		if walkError != nil {
@@ -135,7 +135,7 @@ func CreateChangeMap(from, to theme.ThemeFile) []types.ChangeMap {
 			Code:  row.Key,
 			From: row.Value,
 			To:   pairNewThemeRow.Value,
-			File: row.Meta.Path,
+			FilePath: row.Meta.Path,
 		})
 	}
 	return changeMap

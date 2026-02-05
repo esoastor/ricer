@@ -1,7 +1,6 @@
 package filesys_test
 
 import (
-	// "log"
 	"ricer/internal/filesys"
 	"ricer/internal/types"
 	"ricer/test/helpers"
@@ -11,18 +10,19 @@ import (
 
 func TestCreateChangeMap(t *testing.T) {
 	controlChangeMap := []types.ChangeMap{
-		{From: "#fbaded", To: "#fbad00", Code: "globalVar1", File: ""},
+		{From: "#fbaded", To: "#fbad00", Code: "globalVar1", FilePath: ""},
+		{From: "#1f2fff", To: "#10aaff", Code: "var1", FilePath: "coolSoft/styles.css"},
 		{From: `{
         "some-theme",
         local params = test test params
     }`, To: `{
         "new-theme",
         local params = test test params
-    }`, Code: "theme", File: "/nvim/theme.lua"},
-		{From: "testVal val val", To: "testVal val vaaaaaaal", Code: "var1", File: "/some/folder/test.css"},
+    }`, Code: "theme", FilePath: "coolSoft/styles.css"},
+		{From: "testVal val val", To: "testVal val vaaaaaaal", Code: "var1", FilePath: "/some/folder/test.css"},
 	}
 
-	const changedKeysNumberFromGoodToDiffThemes = 3
+	const changedKeysNumberFromGoodToDiffThemes = 4
 	from := helpers.GetGoodTheme()
 	to := helpers.GetDiffTheme()
 
@@ -38,7 +38,7 @@ func TestCreateChangeMap(t *testing.T) {
 		fromOk := clearState(change.From) == clearState(control.From)
 		toOk := clearState(change.To) == clearState(control.To)
 		codeOk := change.Code == control.Code
-		fileOk := change.File == control.File
+		fileOk := change.FilePath == control.FilePath
 		if fromOk && toOk && codeOk && fileOk {
 			continue
 		}

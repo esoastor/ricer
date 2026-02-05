@@ -10,7 +10,7 @@ type ChangeMap struct {
 	From string
 	To   string
 	Code string
-	File string
+	FilePath string
 }
 
 type ThemeFile struct {

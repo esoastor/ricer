@@ -22,14 +22,24 @@ func SubmitTheme(theme theme.ThemeFile) {
 			log.Fatalf("Error reading file: %v", err)
 		}
 		content := string(contentRaw)
-		content = replaceByTheme(changeMap, content)
+		content = ReplaceByChangeMap(changeMap, content, subjectPath)
 		os.WriteFile(subjectPath, []byte(content), 0644)
 	}
 	setCurrentTheme(theme)
 }
 
-func replaceByTheme(changeMap []types.ChangeMap, content string) string {
+func ReplaceByChangeMap(changeMap []types.ChangeMap, content, contentPath string) string {
+	// log.Print(content + "\n")
 	for _, change := range changeMap {
+		changeFilePathLen := len(change.FilePath)
+		contentFilePathLen := len(contentPath)
+
+		if changeFilePathLen > 0 && changeFilePathLen < contentFilePathLen {
+			sub := contentPath[contentFilePathLen - changeFilePathLen:]
+			if sub != change.FilePath {
+				continue
+			}
+		}
 		content = strings.ReplaceAll(content, change.From, change.To)
 	}
 	return content

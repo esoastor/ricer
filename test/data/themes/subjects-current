@@ -1,0 +1,20 @@
+radius = 15px
+font = CoolFont
+
+[file coolSoft/styles.css]
+se-background = #fabb11
+wp-background = #777faf
+[endfile]
+
+[file lalala/hmhmhm.conf]
+active_border = #777faf
+inactive_border = #891bbf
+rw-active_border = #c26480
+rw-inactive_border = #fabb11
+[endfile]
+
+
+[file racoon/theme]
+background = #777faf
+[endfile]
+

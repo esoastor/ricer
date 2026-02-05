@@ -1,0 +1,16 @@
+.special-element {
+    font: CoolFont;
+    background: #fabb11;
+    color: #891bbf;
+    border-radius: 15px;
+}
+
+#button.main:active {
+    background: #af2112;
+    padding: .5rem 1rem;
+}
+
+.workspace {
+    border-radius: 15px;
+    background: #777faf
+}

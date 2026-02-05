@@ -1,0 +1,20 @@
+radius = 1rem
+font = HellaCreepMono
+
+[file coolSoft/styles.css]
+se-background = #fff666
+wp-background = #898911
+[endfile]
+
+[file lalala/hmhmhm.conf]
+active_border = #777faf
+inactive_border = #891bbf
+rw-active_border = #880180
+rw-inactive_border = #fabb11
+[endfile]
+
+
+[file racoon/theme]
+background = #fa9000
+[endfile]
+
