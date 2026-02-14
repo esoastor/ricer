@@ -20,12 +20,6 @@ var listCmd = &cobra.Command{
 	Run:   listThemes,
 }
 
-var currentCmd = &cobra.Command{
-	Use:   "current",
-	Short: "show current theme",
-	Run:   showCurrentTheme,
-}
-
 var listSubjectsCmd = &cobra.Command{
 	Use:   "subjects",
 	Short: "list of files that will be changed by ricer",
@@ -61,11 +55,6 @@ func listThemes(cmd *cobra.Command, args []string) {
 	for index, theme := range themes {
 		fmt.Printf("%v: %v\n", index+1, theme.Name)
 	}
-}
-
-func showCurrentTheme(cmd *cobra.Command, args []string) {
-	cur := theme.GetCurrent()
-	fmt.Printf("%v\nwhat?? its always current. Nonsense\n", cur)
 }
 
 func setTheme(cmd *cobra.Command, args []string) {
