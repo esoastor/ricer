@@ -10,7 +10,7 @@ import (
 	"ricer/internal/types"
 )
 
-func GetConfig() types.Config {
+func Get() types.Config { // todo just Get()
 	path := getConfigPath()
 	file, err := os.OpenFile(path, os.O_CREATE|os.O_RDONLY, 0644)
 	if err != nil {

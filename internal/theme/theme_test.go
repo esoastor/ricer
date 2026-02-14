@@ -1,7 +1,7 @@
-package filesys_test
+package theme_test
 
 import (
-	"ricer/internal/filesys"
+	"ricer/internal/theme"
 	"ricer/internal/types"
 	"ricer/test/helpers"
 	"strings"
@@ -26,7 +26,7 @@ func TestCreateChangeMap(t *testing.T) {
 	from := helpers.GetGoodTheme()
 	to := helpers.GetDiffTheme()
 
-	changeMap := filesys.CreateChangeMap(from, to)
+	changeMap := theme.CreateChangeMap(from, to)
 
 	changesLen := len(changeMap)
 	if changesLen != changedKeysNumberFromGoodToDiffThemes {
@@ -50,4 +50,29 @@ func clearState(state string) string {
 	state = strings.ReplaceAll(state, "\n", "")
 	state = strings.ReplaceAll(state, " ", "")
 	return state
+}
+
+func TestReplaceByChangeMap(t *testing.T) {
+	subjectsFiles := helpers.GetSubjects()
+	expectedFiles := helpers.GetExpected()
+
+	current := helpers.GetSubjectCurrentTheme()
+	applied := helpers.GetSubjectThemeTheme()
+
+	changeMap := theme.CreateChangeMap(current, applied)
+
+	for key, value := range subjectsFiles {
+		expected := expectedFiles[key].Content
+		replaced := theme.ReplaceByChangeMap(changeMap, value.Content, value.Path)
+
+		expectedFlat := strings.ReplaceAll(expected, " ", "")
+		expectedFlat = strings.ReplaceAll(expectedFlat, "\n", "")
+
+		replacedFlat := strings.ReplaceAll(replaced, " ", "")
+		replacedFlat = strings.ReplaceAll(replacedFlat, "\n", "")
+
+		if expectedFlat != replacedFlat {
+			t.Fatalf("NOT EQUAL:\n%v\nAND\n%v", replaced, expected)
+		} 	
+	}
 }

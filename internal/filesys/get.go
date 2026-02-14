@@ -5,65 +5,10 @@ import (
 	"log"
 	"path/filepath"
 	"ricer/internal/config"
-	"ricer/internal/consts"
-	"ricer/internal/theme"
-	"ricer/internal/types"
 )
 
-func GetThemeByName(name string) theme.ThemeFile {
-	themes := GetThemes()
-	for _, theme := range themes {
-		if theme.Name != name {
-			continue
-		}
-		return theme
-	}
-	panic("no theme")
-}
-
-func GetCurrentTheme() theme.ThemeFile {
-	conf := config.GetConfig()
-	themes := GetFiles(conf.ThemesPath)
-
-	curThemeFileNameLen := len(consts.CURRENT_THEME_FILE_NAME)
-	for _, filePath := range themes {
-		fileName := GetFileName(filePath)
-		if filePath[len(filePath)-curThemeFileNameLen:] != consts.CURRENT_THEME_FILE_NAME {
-			continue
-		}
-
-		file := theme.ThemeFile{}
-		file.Path = filePath
-		file.Name = fileName
-		return file 
-	}
-
-	log.Fatal("Failed to get current theme")
-	return theme.ThemeFile{}
-}
-
-func GetThemes() []theme.ThemeFile {
-	conf := config.GetConfig()
-	themes := GetFiles(conf.ThemesPath)
-	var themesFiltered []theme.ThemeFile
-
-	curThemeFileNameLen := len(consts.CURRENT_THEME_FILE_NAME)
-	for _, filePath := range themes {
-		fileName := GetFileName(filePath)
-		if filePath[len(filePath)-curThemeFileNameLen:] == consts.CURRENT_THEME_FILE_NAME {
-			continue
-		}
-		file := theme.ThemeFile{}
-		file.Path = filePath
-		file.Name = fileName
-		themesFiltered = append(themesFiltered, file)
-	}
-
-	return themesFiltered
-}
-
 func GetSubjectFiles() []string {
-	conf := config.GetConfig()
+	conf := config.Get()
 	filesAll := GetFiles(conf.SubjectPath)
 	var filesFiltered []string
 	excludes := conf.Exclude
@@ -111,33 +56,5 @@ func GetFiles(path string) []string {
 
 func GetFileName(path string) string {
 	return filepath.Base(path)
-}
-
-func CreateChangeMapForCurrent(themeFile theme.ThemeFile) []types.ChangeMap {
-	current := GetCurrentTheme()
-
-	return CreateChangeMap(current, themeFile)
-}
-
-
-func CreateChangeMap(from, to theme.ThemeFile) []types.ChangeMap {
-	newTheme := to.FormTheme()
-	curTheme := from.FormTheme()
-    
-	var changeMap []types.ChangeMap
-	for _, row := range curTheme {
-		pairNewThemeRow, exists := newTheme[row.FormId()]
-		if !exists || row.Value == pairNewThemeRow.Value {
-			continue
-		}
-
-		changeMap = append(changeMap, types.ChangeMap{
-			Code:  row.Key,
-			From: row.Value,
-			To:   pairNewThemeRow.Value,
-			FilePath: row.Meta.Path,
-		})
-	}
-	return changeMap
 }
 
