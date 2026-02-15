@@ -1,15 +1,16 @@
 package types
 
 type Config struct {
-	ThemesPath  string   `yaml:"themesPath"`
-	SubjectPath string   `yaml:"subjectsPath"`
-	Exclude     []string `yaml:"exclude"`
+	ThemesPath   string   `yaml:"themesPath"`
+	SubjectPath  string   `yaml:"subjectsPath"`
+	Exclude      []string `yaml:"exclude"`
+	AfterCommand []string `yaml:"afterCommand"`
 }
 
 type ChangeMap struct {
-	From string
-	To   string
-	Code string
+	From     string
+	To       string
+	Code     string
 	FilePath string
 }
 
@@ -19,12 +20,12 @@ type ThemeFile struct {
 }
 
 type ThemeRow struct {
-	Key string
+	Key   string
 	Value string
-	Meta ThemeRowMeta
+	Meta  ThemeRowMeta
 }
 
-func(row *ThemeRow) FormId() string {
+func (row *ThemeRow) FormId() string {
 	return row.Key + row.Meta.Path
 }
 
@@ -37,5 +38,3 @@ type MultilineStruct struct {
 	MultilineKey     string
 	MultilineValue   string
 }
-
-

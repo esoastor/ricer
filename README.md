@@ -44,12 +44,12 @@ Edit the configuration file:
 ~/.config/ricer/config.yaml
 ```
 
-| key          | type   | description                                                                 | required |
-|--------------|--------|-----------------------------------------------------------------------------|----------|
-| themesPath   | string | Directory containing theme files                                            | yes      |
-| subjectsPath | string | Directory containing configuration files to be modified                    | yes      |
-| exclude      | list   | Files or directories (relative to `subjectsPath`) excluded from processing | no       |
-
+| key          | type   | description                                                                    | required |
+|--------------|--------|--------------------------------------------------------------------------------|----------|
+| themesPath   | string | Directory containing theme files                                               | yes      |
+| subjectsPath | string | Directory containing configuration files to be modified                        | yes      |
+| exclude      | list   | Files or directories (relative to `subjectsPath`) excluded from processing     | no       |
+| afterCommand | list   | Sh command that will be executed after theme switching. \["command", ..."args"\] | no       |
 Ensure that all configured paths exist and are accessible.
 
 ## Current Theme
@@ -142,5 +142,6 @@ Displays the changes that would be applied if the theme with the specified `<nam
 ### `ricer set <name>`
 Sets the specified theme as `current` and applies the computed changemap to the configured files.
 
-Todo:
+Todo:  
+[ ] post install action  
 [ ] vars support

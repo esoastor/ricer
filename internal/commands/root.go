@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"ricer/internal/filesys"
 	"ricer/internal/theme"
+	"ricer/internal/script"
 	"github.com/spf13/cobra"
 )
 
@@ -59,6 +60,7 @@ func setTheme(cmd *cobra.Command, args []string) {
 	themeCol := theme.GetAll()
 	subjTheme := themeCol.GetByName(args[0])
 	theme.Submit(subjTheme)
+	script.Run()
 }
 
 func showChangemap(cmd *cobra.Command, args []string) {
