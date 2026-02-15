@@ -1,7 +1,6 @@
 package theme
 
 import (
-	"fmt"
 	"log"
 	"path/filepath"
 	"os"
@@ -11,17 +10,6 @@ import (
 	"ricer/internal/filesys"
 	"strings"
 )
-
-func GetByName(name string) (ThemeFile, error) {
-	themes := GetAll()
-	for _, theme := range themes {
-		if theme.Name != name {
-			continue
-		}
-		return theme, nil
-	}
-	return ThemeFile{}, fmt.Errorf("%s: theme does not exist.", name)
-}
 
 func GetCurrent() ThemeFile {
 	conf := config.Get()
@@ -45,7 +33,7 @@ func GetCurrent() ThemeFile {
 }
 
 // get all awailable themes
-func GetAll() []ThemeFile {
+func GetAll() ThemeFileCollection {
 	conf := config.Get()
 	themes := filesys.GetFiles(conf.ThemesPath)
 	var themesFiltered []ThemeFile
@@ -62,7 +50,7 @@ func GetAll() []ThemeFile {
 		themesFiltered = append(themesFiltered, file)
 	}
 
-	return themesFiltered
+	return ThemeFileCollection{Files: themesFiltered}
 }
 
 func CreateChangeMapForCurrent(themeFile ThemeFile) []types.ChangeMap {

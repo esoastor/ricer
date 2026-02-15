@@ -15,8 +15,8 @@ Example:
 ```sh
 # list all themes
 ricer themes
-# set theme with id 2 as current
-ricer set 2
+# set theme with name nord as current
+ricer set nord
 ```
 
 ## Installation
@@ -130,21 +130,17 @@ background = #777faf
 After configuring the application and creating `current` and additional themes, use the following commands:
 
 ### `ricer themes`
-Lists all themes found in `themesPath` along with their IDs.
+Lists all themes found in `themesPath`.
 
 ### `ricer subjects`
 Lists all files in `subjectsPath`, excluding those defined in `exclude`.  
 These files are eligible for modification when applying a theme.
 
-### `ricer changemap <id>`
-Displays the changes that would be applied if the theme with the specified `<id>` were set as `current`.
+### `ricer changemap <name>`
+Displays the changes that would be applied if the theme with the specified `<name>` were set as `current`.
 
-### `ricer set <id>`
+### `ricer set <name>`
 Sets the specified theme as `current` and applies the computed changemap to the configured files.
 
 Todo:
-[ ] panic -> error
-[ ] check syntax of theme. `check` with `--name`
-[ ] --name attr (set theme by filename)
-[ ] postinstall action in config
-
+[ ] vars support

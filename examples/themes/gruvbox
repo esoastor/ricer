@@ -1,0 +1,66 @@
+[file .config/waybar/style.css]
+text = text #DFBF8E
+workspace-button = #928374
+workspace-urgent = #EA6962
+workspace-button-active = color: #E78A4E
+bg = #282828
+power-btn-color = #EA6962
+[endfile]
+
+[file .config/dunst/dunstrc]
+background = "#282828"
+frame = "#504945"
+[endfile]
+
+[file .config/wofi/style.css]
+line = line #504945
+bg = bg #282828 // main bg
+bg2 = bg2 #504945 // input & selection
+border-focus = accent #282828;
+[endfile]
+
+[file .config/.zshrc]
+command = [command]='fg=#a9b665'
+builtin = [builtin]='fg=#a9b665'
+function = [function]='fg=#7daea3'
+reserved-word = #d3869b
+danger = #EA6962
+console-dir = %F{#dfbf8e}
+console-git = %F{#d3869b}
+[endfile]
+
+[file .config/hypr/hyprland.conf]
+active-border = rgba(504945CC)
+inactive-border = rgba(282828CC)
+[endfile]
+
+[file .config/hypr/hyprlock.conf]
+color-text = rgb(DFBF8E)
+color-input-border = rgb(504945)
+color-input-bg = rgb(282828)
+[endfile]
+
+[file .config/ghostty/config]
+theme = Gruvbox Material
+[endfile]
+
+[file .config/nvim/lua/plugins/themes.lua]
+theme = ```
+    {
+        "sainnhe/gruvbox-material",
+        name = "gruvbox-material",
+        lazy = false,
+        priority = 1000,
+        config = function()
+            vim.g.gruvbox_material_background = "hard"
+            vim.g.gruvbox_material_foreground = "material"
+            vim.g.gruvbox_material_ui_contrast = "high"
+            vim.g.gruvbox_material_statusline_style = "material"
+            vim.g.gruvbox_material_better_performance = 1
+            vim.cmd.colorscheme("gruvbox-material")
+        end,
+    }
+```
+[endfile]
+
+

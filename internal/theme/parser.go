@@ -1,12 +1,12 @@
 package theme
 
 import (
+	"fmt"
 	"log"
-	"os"
 	"regexp"
+	"ricer/internal/types"
 	"slices"
 	"strings"
-	"ricer/internal/types"
 )
 
 const commentMark = "//"
@@ -23,28 +23,7 @@ const metaStartRegex = `^\s*\` + metaOpen + `\s*(\w+)\s+([\w|/|.]+)\s*\` + metaC
 const metaEndRegex = `^\s*\` + metaOpen + `\s*end\s*(\w+)\s*\` + metaClose + `\s*$`
 
 
-type ThemeFile struct {
-	types.ThemeFile
-}
-
-func (tf ThemeFile) FormTheme() map[string]types.ThemeRow {
-	return GetTheme(tf)
-}
-
-func GetTheme(tf ThemeFile) map[string]types.ThemeRow {
-	contentRaw, err := os.ReadFile(tf.Path)
-	if err != nil {
-		log.Fatalf("Error reading file: %v", err)
-	}
-	content := string(contentRaw)
-	rows := strings.Split(content, "\n")
-
-	theme := processRows(rows)
-
-	return theme
-}
-
-func processRows(rows []string) map[string]types.ThemeRow {
+func processRows(rows []string) (map[string]types.ThemeRow, error) {
 	theme := make(map[string]types.ThemeRow)
 
 	meta := types.ThemeRowMeta{
@@ -60,7 +39,10 @@ func processRows(rows []string) map[string]types.ThemeRow {
 	for _, row := range rows {
 		rowClear := cleanRowInitialy(row)
 
-		skipStep := processMultilineValue(rowClear, &meta, &multilineParams, &theme)
+		skipStep, err := processMultilineValue(rowClear, &meta, &multilineParams, &theme)
+		if err != nil {
+			return theme, err
+		}
 		if skipStep {
 			continue
 		}
@@ -73,78 +55,85 @@ func processRows(rows []string) map[string]types.ThemeRow {
 			continue
 		}
 
-		clearValuesAndAddToTheme(first, second, &meta, &theme)
+		err = clearValuesAndAddToTheme(first, second, &meta, &theme)
+		if err != nil {
+			return theme, err
+		}
 	}
-	return theme
+	return theme, nil
 }
 
-func processMultilineValue(row string, meta *types.ThemeRowMeta, multilineParams *types.MultilineStruct, theme *map[string]types.ThemeRow) bool {
+func processMultilineValue(row string, meta *types.ThemeRowMeta, multilineParams *types.MultilineStruct, theme *map[string]types.ThemeRow) (bool, error) {
 	hasMultilineMark := strings.Contains(row, multilineValueMark)
 
 	if !hasMultilineMark && multilineParams.IsMultilineValue {
 		multilineParams.MultilineValue += "\n" + row
-		return true
+		return true, nil
 	}
 
 	if hasMultilineMark && !multilineParams.IsMultilineValue {
 		multilineParams.IsMultilineValue = true
 		first, second, found := strings.Cut(row, keyValSeparator)
 		if !found || len(first) == 0 || len(second) == 0 {
-			return true
+			return true, nil
 		}
 		key := strings.TrimSpace(first)
 		val := strings.TrimSpace(second)
 		multilineParams.MultilineKey = key
 		multilineParams.MultilineValue = strings.ReplaceAll(val, multilineValueMark, "")
-		return true
+		return true, nil
 	}
 
 	if hasMultilineMark && multilineParams.IsMultilineValue {
 		multilineParams.IsMultilineValue = false
 		multilineParams.MultilineValue += "\n" + strings.ReplaceAll(row, multilineValueMark, "")
 
-		clearValuesAndAddToTheme(multilineParams.MultilineKey, multilineParams.MultilineValue, meta, theme)
+		err := clearValuesAndAddToTheme(multilineParams.MultilineKey, multilineParams.MultilineValue, meta, theme)
+
+		if err != nil {
+			return false, err
+		}
 
 		multilineParams.MultilineKey = ""
 		multilineParams.MultilineValue = ""
 
-		return true
+		return true, nil
 	}
 
-	return false
+	return false, nil
 }
 
-func processMeta(row string, meta *types.ThemeRowMeta) {
-	const failReadPanicMessage = "invalid theme structure, failed to read"
+func processMeta(row string, meta *types.ThemeRowMeta) error {
+	const failReadPanicMessage = "Invalid theme structure, failed to read row:\n"
 	rowLTrim := strings.TrimLeft(row, " ")
 	if len(rowLTrim) == 0 {
-		return
+		return nil
 	}
 	isTag := string(rowLTrim[0]) == metaOpen
 
 	if !isTag {
-		return
+		return nil
 	}
 
 	metaPathLen := len(meta.Path)
 	tag, value := ParseStartMeta(rowLTrim)
 	if tag != "" && value != "" {
 		if metaPathLen > 0 {
-			panic(failReadPanicMessage)
+			return fmt.Errorf("%s%s", failReadPanicMessage, row)
 		}
 
 		meta.Path = value
-		return
+		return nil
 	}
 
 	tag = ParseEndMeta(rowLTrim)
 
-	if tag == "" || metaPathLen == 0  {
-		panic(failReadPanicMessage)
+	if tag == "" || metaPathLen == 0 {
+		return fmt.Errorf("%s%s", failReadPanicMessage, row)
 	}
 
-
-	meta.Path = ""	
+	meta.Path = ""
+	return nil
 }
 
 func ParseStartMeta(row string) (string, string) {
@@ -197,18 +186,19 @@ func cleanRowFinally(row string) string {
 	return reSp.ReplaceAllString(row, " ")
 }
 
-func clearValuesAndAddToTheme(keyRaw, valRaw string, meta *types.ThemeRowMeta, theme *map[string]types.ThemeRow) {
+func clearValuesAndAddToTheme(keyRaw, valRaw string, meta *types.ThemeRowMeta, theme *map[string]types.ThemeRow) error {
 	key := strings.TrimSpace(keyRaw)
 	val := strings.TrimSpace(valRaw)
 
 	mapKey := key + meta.Path
 	_, exists := (*theme)[mapKey]
-	if (exists) {
-		panic("Invalid theme (key repeat forbidden) " + mapKey)
+	if exists {
+		return fmt.Errorf("Invalid theme syntax: key repeat forbidden (%s)", mapKey)
 	}
 	(*theme)[mapKey] = types.ThemeRow{
 		Key:   key,
 		Value: val,
 		Meta:  *meta,
 	}
+	return nil
 }

@@ -17,7 +17,6 @@ func GetSubjectFiles() []string {
 		for _, exclude := range excludes {
 			exLen := len(exclude)
 			if exLen > len(file) {
-				filesFiltered = append(filesFiltered, file)
 				continue
 			}
 			fileSub := file[0:exLen]
@@ -38,12 +37,14 @@ func GetFiles(path string) []string {
 	files := make([]string, 0)
 	err := filepath.WalkDir(path, func(currentPath string, directoryEntry fs.DirEntry, walkError error) error {
 		if walkError != nil {
+			// todo fix 
 			return walkError
 		}
 
 		if directoryEntry.IsDir() {
 			return nil
 		}
+
 		files = append(files, currentPath)
 		return nil
 	})

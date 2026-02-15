@@ -2,10 +2,9 @@ package commands
 
 import (
 	"fmt"
-	"github.com/spf13/cobra"
 	"ricer/internal/filesys"
 	"ricer/internal/theme"
-	"strconv"
+	"github.com/spf13/cobra"
 )
 
 var rootCmd = &cobra.Command{
@@ -42,7 +41,6 @@ var showChangemapCmd = &cobra.Command{
 // Execute executes the root command.
 func Execute() error {
 	rootCmd.AddCommand(listCmd)
-	rootCmd.AddCommand(currentCmd)
 	rootCmd.AddCommand(listSubjectsCmd)
 	rootCmd.AddCommand(setCmd)
 	rootCmd.AddCommand(showChangemapCmd)
@@ -52,33 +50,21 @@ func Execute() error {
 
 func listThemes(cmd *cobra.Command, args []string) {
 	themes := theme.GetAll()
-	for index, theme := range themes {
+	for index, theme := range themes.Files {
 		fmt.Printf("%v: %v\n", index+1, theme.Name)
 	}
 }
 
 func setTheme(cmd *cobra.Command, args []string) {
-	themes := theme.GetAll()
-	index, err := strconv.Atoi(args[0])
-	if err != nil || len(themes) < index {
-		fmt.Print("error")
-		panic("aa")
-	}
-	themeForSubmit := themes[index-1]
-
-	theme.Submit(themeForSubmit)
+	themeCol := theme.GetAll()
+	subjTheme := themeCol.GetByName(args[0])
+	theme.Submit(subjTheme)
 }
 
 func showChangemap(cmd *cobra.Command, args []string) {
-	themes := theme.GetAll()
-	index, err := strconv.Atoi(args[0])
-	if err != nil || len(themes) < index {
-		fmt.Print("error")
-		panic("aa")
-	}
-	themeForChange := themes[index-1]
-	// todo: failed to get current theme
-	changeMap := theme.CreateChangeMapForCurrent(themeForChange)
+	themeCol := theme.GetAll()
+	subjTheme := themeCol.GetByName(args[0])
+	changeMap := theme.CreateChangeMapForCurrent(subjTheme)
 	for _, change := range changeMap {
 		where := "all files"
 		if len(change.FilePath) > 0 {
