@@ -49,7 +49,7 @@ Edit the configuration file:
 | themesPath   | string | Directory containing theme files                                               | yes      |
 | subjectsPath | string | Directory containing configuration files to be modified                        | yes      |
 | exclude      | list   | Files or directories (relative to `subjectsPath`) excluded from processing     | no       |
-| afterCommand | list   | Sh command that will be executed after theme switching. \["command", ..."args"\] | no       |
+| afterCommand | list   | Command to execute after the theme has been switched. Specified as an array where the first element is the executable and the rest are its arguments: ["executable", "arg1", "arg2", ...]. Intended for triggering post-switch routines such as reloading configuration files, restarting user interface components, or applying changes in running services. | no       |
 Ensure that all configured paths exist and are accessible.
 
 ## Current Theme

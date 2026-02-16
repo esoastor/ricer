@@ -2,6 +2,7 @@ package theme_test
 
 import (
 	// "log"
+	"log"
 	"ricer/internal/theme"
 	"ricer/test/helpers"
 	"slices"
@@ -84,7 +85,11 @@ func TestGetGoodTheme(t *testing.T) {
 
 	themeFile := helpers.GetGoodTheme()
 
-	testTheme := theme.GetTheme(themeFile)
+	testTheme, err := themeFile.FormTheme()
+
+	if err != nil {
+		t.Fatalf("Error: %s", err.Error())
+	}
 
 	if len(testTheme) != expectedRows {
 		t.Fatalf("Wrong number: %v != %v", expectedRows, len(testTheme))
@@ -98,4 +103,11 @@ func TestGetGoodTheme(t *testing.T) {
 	}
 }
 
-// todo TestGetBadTheme
+func TestGetBadTheme(t *testing.T) {
+	themeFile := helpers.GetBadTheme()
+	_, err := themeFile.FormTheme()
+	if err == nil {
+		t.Fatalf("Should return error")
+	}
+}
+

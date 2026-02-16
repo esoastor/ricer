@@ -1,13 +1,14 @@
 package theme
 
 import (
+	"fmt"
 	"log"
-	"path/filepath"
 	"os"
+	"path/filepath"
 	"ricer/internal/config"
-	"ricer/internal/types"
 	"ricer/internal/consts"
 	"ricer/internal/filesys"
+	"ricer/internal/types"
 	"strings"
 )
 
@@ -60,8 +61,20 @@ func CreateChangeMapForCurrent(themeFile ThemeFile) []types.ChangeMap {
 }
 
 func CreateChangeMap(from, to ThemeFile) []types.ChangeMap {
-	newTheme := to.FormTheme()
-	curTheme := from.FormTheme()
+	curTheme, errFrom := from.FormTheme()
+	newTheme, errTo := to.FormTheme()
+	
+	errFn := func(err error) {
+		fmt.Printf("Error while forming theme:\n%s\n", err.Error())
+		os.Exit(1)
+	}
+	if errFrom != nil {
+		errFn(errFrom)
+	}
+
+	if errTo != nil {
+		errFn(errTo)
+	}
 
 	var changeMap []types.ChangeMap
 	for _, row := range curTheme {

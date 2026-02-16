@@ -2,7 +2,6 @@ package theme
 
 import (
 	"fmt"
-	"log"
 	"regexp"
 	"ricer/internal/types"
 	"slices"
@@ -47,7 +46,11 @@ func processRows(rows []string) (map[string]types.ThemeRow, error) {
 			continue
 		}
 
-		processMeta(row, &meta)
+		errMeta := processMeta(row, &meta)
+		if errMeta != nil {
+			return theme, errMeta
+		}
+
 		cleanRowFinally(rowClear)
 
 		first, second, found := strings.Cut(rowClear, keyValSeparator)
@@ -104,7 +107,7 @@ func processMultilineValue(row string, meta *types.ThemeRowMeta, multilineParams
 }
 
 func processMeta(row string, meta *types.ThemeRowMeta) error {
-	const failReadPanicMessage = "Invalid theme structure, failed to read row:\n"
+	const failReadPanicMessage = "Invalid theme structure, failed to read row: "
 	rowLTrim := strings.TrimLeft(row, " ")
 	if len(rowLTrim) == 0 {
 		return nil
@@ -119,7 +122,7 @@ func processMeta(row string, meta *types.ThemeRowMeta) error {
 	tag, value := ParseStartMeta(rowLTrim)
 	if tag != "" && value != "" {
 		if metaPathLen > 0 {
-			return fmt.Errorf("%s%s", failReadPanicMessage, row)
+			return fmt.Errorf("%s%s\n", failReadPanicMessage, row)
 		}
 
 		meta.Path = value
@@ -149,7 +152,6 @@ func ParseStartMeta(row string) (string, string) {
 	metaValue := found[2]
 
 	if !slices.Contains(metaAllowedTags, metaTag) {
-		log.Printf("ivalid tag")
 		return "", ""
 	}
 
@@ -168,7 +170,6 @@ func ParseEndMeta(row string) string {
 	metaTag := found[1]
 
 	if !slices.Contains(metaAllowedTags, metaTag) {
-		log.Printf("ivalid tag")
 		return ""
 	}
 

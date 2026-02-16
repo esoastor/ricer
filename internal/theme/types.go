@@ -2,7 +2,6 @@ package theme
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"ricer/internal/types"
 	"strings"
@@ -12,25 +11,17 @@ type ThemeFile struct {
 	types.ThemeFile
 }
 
-func (tf ThemeFile) FormTheme() map[string]types.ThemeRow {
-	return GetTheme(tf)
-}
-
-func GetTheme(tf ThemeFile) map[string]types.ThemeRow {
-	contentRaw, err := os.ReadFile(tf.Path)
-	if err != nil {
-		log.Fatalf("Error reading file: %v", err)
+func (tf ThemeFile) FormTheme() (map[string]types.ThemeRow, error) {
+	contentRaw, errRead := os.ReadFile(tf.Path)
+	if errRead != nil {
+		emptyTheme := make(map[string]types.ThemeRow)
+		return emptyTheme, errRead
 	}
 	content := string(contentRaw)
 	rows := strings.Split(content, "\n")
 
-	theme, err := processRows(rows)
-
-	if err != nil {
-		log.Fatalf("%s", err.Error())
-	}
-
-	return theme
+	theme, errProcess := processRows(rows)
+	return theme, errProcess
 }
 
 type ThemeFileCollection struct {
